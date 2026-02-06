@@ -699,6 +699,188 @@
             margin: 0.5rem 0;
         }
 
+
+        /* Layers Panel */
+        .layers-panel {
+            background: var(--secondary-bg);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid var(--accent-purple);
+        }
+
+        .layers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .layers-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .add-layer-btn {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .add-layer-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .layers-list {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .layer-item {
+            background: var(--primary-bg);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .layer-item:hover {
+            background: rgba(155, 81, 224, 0.2);
+        }
+
+        .layer-item.active {
+            border-color: var(--accent-pink);
+            background: rgba(255, 107, 157, 0.2);
+        }
+
+        .layer-visibility {
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .layer-visibility:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .layer-visibility.hidden {
+            opacity: 0.3;
+        }
+
+        .layer-preview {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .layer-preview canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .layer-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .layer-name {
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+            cursor: text;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .layer-name input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--accent-purple);
+            color: var(--text-light);
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: inherit;
+            width: 100%;
+        }
+
+        .layer-opacity-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .layer-opacity-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .layer-opacity-slider {
+            flex: 1;
+            height: 4px;
+        }
+
+        .layer-controls {
+            display: flex;
+            gap: 0.25rem;
+            flex-shrink: 0;
+        }
+
+        .layer-control-btn {
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .layer-control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .layer-control-btn.delete:hover {
+            background: var(--accent-pink);
+        }
+
+        .layer-control-btn.merge:hover {
+            background: var(--accent-purple);
+        }
+
         /* Playback Controls */
         .playback-controls {
             padding: 1.5rem;
@@ -1133,7 +1315,7 @@
                     <canvas id="mainCanvas" width="800" height="600"></canvas>
                 </div>
                 <div class="canvas-controls">
-                    <button class="btn btn-secondary" id="clearBtn">Clear Frame</button>
+                    <button class="btn btn-secondary" id="clearBtn">Clear Layer</button>
                     <button class="btn btn-secondary" id="undoBtn">Undo ↶</button>
                     <button class="btn btn-secondary" id="redoBtn">Redo ↷</button>
                     <button class="btn btn-secondary" id="duplicateBtn">Duplicate Frame</button>
@@ -1168,6 +1350,17 @@
                     </div>
                 </div>
 
+
+                <!-- Layers Panel -->
+                <div class="layers-panel">
+                    <div class="layers-header">
+                        <div class="layers-title">🎨 Layers</div>
+                        <button class="add-layer-btn" id="addLayerBtn">+ Add Layer</button>
+                    </div>
+                    <div class="layers-list" id="layersList">
+                        <!-- Layers will be dynamically added here -->
+                    </div>
+                </div>
                 <!-- Timeline -->
                 <div class="panel-section" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
                     <h3 class="panel-title">🎞 Timeline</h3>
@@ -1195,7 +1388,7 @@
     <!-- Context Menu -->
     <div class="context-menu" id="contextMenu">
         <div class="context-menu-item" data-action="duplicate">📋 Duplicate Frame</div>
-        <div class="context-menu-item" data-action="clear">🧹 Clear Frame</div>
+        <div class="context-menu-item" data-action="clear">🧹 Clear Layer</div>
         <div class="context-menu-separator"></div>
         <div class="context-menu-item danger" data-action="delete">🗑️ Delete Frame</div>
     </div>
@@ -1260,7 +1453,11 @@
             currentProjectId: null,
             projects: [],
             frames: [],
+            canvasWidth: 800,
+            canvasHeight: 600,
+            layerIdCounter: 1,
             currentFrameIndex: 0,
+            currentLayerIndex: 0,
             currentTool: 'pen',
             currentColor: '#000000',
             brushSize: 3,
@@ -1280,6 +1477,296 @@
             draggedFrameIndex: null
         };
 
+        // Frame Creation
+        function createFrame() {
+            const canvas = document.createElement('canvas');
+            canvas.width = state.canvasWidth;
+            canvas.height = state.canvasHeight;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            
+            // Create default layer
+            const layers = [{
+                id: state.layerIdCounter++,
+                name: 'Layer 1',
+                canvas: canvas,
+                ctx: ctx,
+                visible: true,
+                opacity: 1
+            }];
+            
+            return {
+                layers: layers,
+                currentLayerIndex: 0
+            };
+        }
+
+        // Flatten all layers into a single canvas
+        function flattenFrame(frame) {
+            if (!frame || !frame.layers || frame.layers.length === 0) {
+                const canvas = document.createElement('canvas');
+                canvas.width = state.canvasWidth;
+                canvas.height = state.canvasHeight;
+                return canvas;
+            }
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = state.canvasWidth;
+            canvas.height = state.canvasHeight;
+            const ctx = canvas.getContext('2d');
+
+            frame.layers.forEach(layer => {
+                if (!layer.visible) return;
+                ctx.globalAlpha = layer.opacity;
+                ctx.drawImage(layer.canvas, 0, 0);
+            });
+
+            ctx.globalAlpha = 1;
+            return canvas;
+        }
+
+        // Layer Management Functions
+        function addLayer() {
+            if (!state.frames || !state.frames[state.currentFrameIndex]) return;
+            const currentFrame = state.frames[state.currentFrameIndex];
+            const canvas = document.createElement('canvas');
+            canvas.width = state.canvasWidth;
+            canvas.height = state.canvasHeight;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            
+            const newLayer = {
+                id: state.layerIdCounter++,
+                name: `Layer ${currentFrame.layers.length + 1}`,
+                canvas: canvas,
+                ctx: ctx,
+                visible: true,
+                opacity: 1
+            };
+            
+            currentFrame.layers.push(newLayer);
+            state.currentLayerIndex = currentFrame.layers.length - 1;
+            updateLayersPanel();
+            renderCanvas();
+            saveHistory();
+            showActionIndicator('New layer added! 🎨');
+        }
+
+        function deleteLayer(layerIndex) {
+            if (!state.frames || !state.frames[state.currentFrameIndex]) return;
+            const currentFrame = state.frames[state.currentFrameIndex];
+            if (currentFrame.layers.length <= 1) {
+                showActionIndicator('Cannot delete the last layer! ⚠️');
+                return;
+            }
+            
+            if (confirm('Delete this layer?')) {
+                currentFrame.layers.splice(layerIndex, 1);
+                if (state.currentLayerIndex >= currentFrame.layers.length) {
+                    state.currentLayerIndex = currentFrame.layers.length - 1;
+                }
+                updateLayersPanel();
+                renderCanvas();
+                saveHistory();
+                showActionIndicator('Layer deleted! 🗑️');
+            }
+        }
+
+        function setActiveLayer(layerIndex) {
+            state.currentLayerIndex = layerIndex;
+            updateLayersPanel();
+        }
+
+        function toggleLayerVisibility(layerIndex) {
+            if (!state.frames || !state.frames[state.currentFrameIndex]) return;
+            const currentFrame = state.frames[state.currentFrameIndex];
+            currentFrame.layers[layerIndex].visible = !currentFrame.layers[layerIndex].visible;
+            updateLayersPanel();
+            renderCanvas();
+        }
+
+        function setLayerOpacity(layerIndex, opacity) {
+            if (!state.frames || !state.frames[state.currentFrameIndex]) return;
+            const currentFrame = state.frames[state.currentFrameIndex];
+            currentFrame.layers[layerIndex].opacity = opacity;
+            renderCanvas();
+        }
+
+        function renameLayer(layerIndex, newName) {
+            if (!state.frames || !state.frames[state.currentFrameIndex]) return;
+            const currentFrame = state.frames[state.currentFrameIndex];
+            currentFrame.layers[layerIndex].name = newName;
+            updateLayersPanel();
+        }
+
+        function mergeLayerDown(layerIndex) {
+            if (!state.frames || !state.frames[state.currentFrameIndex]) return;
+            const currentFrame = state.frames[state.currentFrameIndex];
+            if (layerIndex === 0) {
+                showActionIndicator('Cannot merge bottom layer! ⚠️');
+                return;
+            }
+            
+            const upperLayer = currentFrame.layers[layerIndex];
+            const lowerLayer = currentFrame.layers[layerIndex - 1];
+            
+            // Draw upper layer onto lower layer
+            lowerLayer.ctx.globalAlpha = upperLayer.opacity;
+            lowerLayer.ctx.drawImage(upperLayer.canvas, 0, 0);
+            lowerLayer.ctx.globalAlpha = 1;
+            
+            // Remove upper layer
+            currentFrame.layers.splice(layerIndex, 1);
+            state.currentLayerIndex = layerIndex - 1;
+            
+            updateLayersPanel();
+            renderCanvas();
+            saveHistory();
+            showActionIndicator('Layers merged! 🔗');
+        }
+
+        function updateLayersPanel() {
+            if (!state.frames || !state.frames[state.currentFrameIndex]) {
+                return;
+            }
+            const currentFrame = state.frames[state.currentFrameIndex];
+            const layersList = document.getElementById('layersList');
+            if (!layersList) return;
+            
+            layersList.innerHTML = '';
+            
+            currentFrame.layers.forEach((layer, index) => {
+                const layerItem = document.createElement('div');
+                layerItem.className = `layer-item ${index === state.currentLayerIndex ? 'active' : ''}`;
+                layerItem.onclick = (e) => {
+                    if (!e.target.closest('.layer-visibility') && !e.target.closest('.layer-control-btn') && !e.target.closest('input')) {
+                        setActiveLayer(index);
+                    }
+                };
+                
+                // Visibility toggle
+                const visibilityBtn = document.createElement('button');
+                visibilityBtn.className = `layer-visibility ${!layer.visible ? 'hidden' : ''}`;
+                visibilityBtn.innerHTML = layer.visible ? '👁️' : '👁️‍🗨️';
+                visibilityBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleLayerVisibility(index);
+                };
+                
+                // Layer preview
+                const preview = document.createElement('div');
+                preview.className = 'layer-preview';
+                const previewCanvas = document.createElement('canvas');
+                previewCanvas.width = 50;
+                previewCanvas.height = 50;
+                const previewCtx = previewCanvas.getContext('2d');
+                previewCtx.drawImage(layer.canvas, 0, 0, 50, 50);
+                preview.appendChild(previewCanvas);
+                
+                // Layer info
+                const info = document.createElement('div');
+                info.className = 'layer-info';
+                
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'layer-name';
+                nameDiv.textContent = layer.name;
+                nameDiv.ondblclick = (e) => {
+                    e.stopPropagation();
+                    const input = document.createElement('input');
+                    input.value = layer.name;
+                    input.onblur = () => {
+                        renameLayer(index, input.value || layer.name);
+                    };
+                    input.onkeypress = (e) => {
+                        if (e.key === 'Enter') {
+                            input.blur();
+                        }
+                    };
+                    nameDiv.textContent = '';
+                    nameDiv.appendChild(input);
+                    input.focus();
+                    input.select();
+                };
+                
+                const opacityControl = document.createElement('div');
+                opacityControl.className = 'layer-opacity-control';
+                
+                const opacityLabel = document.createElement('span');
+                opacityLabel.className = 'layer-opacity-label';
+                opacityLabel.textContent = `${Math.round(layer.opacity * 100)}%`;
+                
+                const opacitySlider = document.createElement('input');
+                opacitySlider.type = 'range';
+                opacitySlider.className = 'layer-opacity-slider';
+                opacitySlider.min = '0';
+                opacitySlider.max = '100';
+                opacitySlider.value = layer.opacity * 100;
+                opacitySlider.oninput = (e) => {
+                    const opacity = parseInt(e.target.value) / 100;
+                    setLayerOpacity(index, opacity);
+                    opacityLabel.textContent = `${e.target.value}%`;
+                };
+                
+                opacityControl.appendChild(opacitySlider);
+                opacityControl.appendChild(opacityLabel);
+                
+                info.appendChild(nameDiv);
+                info.appendChild(opacityControl);
+                
+                // Layer controls
+                const controls = document.createElement('div');
+                controls.className = 'layer-controls';
+                
+                if (index > 0) {
+                    const mergeBtn = document.createElement('button');
+                    mergeBtn.className = 'layer-control-btn merge';
+                    mergeBtn.innerHTML = '⬇️';
+                    mergeBtn.title = 'Merge down';
+                    mergeBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        mergeLayerDown(index);
+                    };
+                    controls.appendChild(mergeBtn);
+                }
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'layer-control-btn delete';
+                deleteBtn.innerHTML = '🗑️';
+                deleteBtn.title = 'Delete layer';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteLayer(index);
+                };
+                controls.appendChild(deleteBtn);
+                
+                layerItem.appendChild(visibilityBtn);
+                layerItem.appendChild(preview);
+                layerItem.appendChild(info);
+                layerItem.appendChild(controls);
+                
+                layersList.appendChild(layerItem);
+            });
+        }
+
+        function renderCanvas() {
+            if (!state.frames || !state.frames[state.currentFrameIndex]) {
+                return;
+            }
+            const currentFrame = state.frames[state.currentFrameIndex];
+            mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+            
+            // Draw all visible layers from bottom to top
+            currentFrame.layers.forEach(layer => {
+                if (layer.visible) {
+                    mainCtx.globalAlpha = layer.opacity;
+                    mainCtx.drawImage(layer.canvas, 0, 0);
+                }
+            });
+            
+            mainCtx.globalAlpha = 1;
+            updateOnionSkin();
+            updateGrid();
+        }
+
+
         // Canvas Setup
         const mainCanvas = document.getElementById('mainCanvas');
         const mainCtx = mainCanvas.getContext('2d', { willReadFrequently: true });
@@ -1293,6 +1780,12 @@
 
         // Initialize
         function init() {
+            // Initialize frames if empty
+            if (!state.frames || state.frames.length === 0) {
+                state.frames = [createFrame()];
+                state.currentFrameIndex = 0;
+                state.currentLayerIndex = 0;
+            }
             loadProjects();
             setupGallery();
             setupEditor();
@@ -1390,12 +1883,15 @@
         function createNewProject() {
             const projectId = 'project-' + Date.now();
             state.currentProjectId = projectId;
-            state.frames = [];
+            state.frames = [createFrame()];
             state.currentFrameIndex = 0;
+            state.currentLayerIndex = 0;
             state.history = [];
             state.historyIndex = -1;
             
-            addFrame();
+            loadFrame(0);
+            updateTimeline();
+            updateLayersPanel();
             showEditor();
             
             // Prompt for project name
@@ -1426,19 +1922,33 @@
                     const img = new Image();
                     img.onload = () => {
                         const frameCanvas = document.createElement('canvas');
-                        frameCanvas.width = mainCanvas.width;
-                        frameCanvas.height = mainCanvas.height;
-                        const frameCtx = frameCanvas.getContext('2d');
+                        frameCanvas.width = state.canvasWidth;
+                        frameCanvas.height = state.canvasHeight;
+                        const frameCtx = frameCanvas.getContext('2d', { willReadFrequently: true });
                         frameCtx.drawImage(img, 0, 0);
                         
-                        state.frames.push({ canvas: frameCanvas, ctx: frameCtx });
+                        // Create frame with layer structure
+                        const newFrame = {
+                            layers: [{
+                                id: state.layerIdCounter++,
+                                name: 'Layer 1',
+                                canvas: frameCanvas,
+                                ctx: frameCtx,
+                                visible: true,
+                                opacity: 1
+                            }],
+                            currentLayerIndex: 0
+                        };
+                        
+                        state.frames.push(newFrame);
                         loadedCount++;
                         
                         if (loadedCount === projectData.frames.length) {
                             state.currentFrameIndex = projectData.currentFrameIndex || 0;
+                            state.currentLayerIndex = 0;
                             loadFrame(state.currentFrameIndex);
                             updateTimeline();
-                            updateUI();
+                            updateLayersPanel();
                             showEditor();
                             document.getElementById('projectTitleDisplay').textContent = project.name;
                         }
@@ -1455,7 +1965,7 @@
             if (!state.currentProjectId) return;
             
             const projectData = {
-                frames: state.frames.map(frame => frame.canvas.toDataURL('image/png', 0.8)),
+                frames: state.frames.map(frame => flattenFrame(frame).toDataURL('image/png', 0.8)),
                 currentFrameIndex: state.currentFrameIndex,
                 fps: state.fps,
                 onionSkinEnabled: state.onionSkinEnabled,
@@ -1464,7 +1974,7 @@
                 autoSaveEnabled: state.autoSaveEnabled
             };
             
-            const thumbnail = state.frames[0]?.canvas.toDataURL('image/png', 0.3);
+            const thumbnail = state.frames[0] ? flattenFrame(state.frames[0]).toDataURL('image/png', 0.3) : null;
             const projectName = document.getElementById('projectTitleDisplay').textContent;
             
             const existingIndex = state.projects.findIndex(p => p.id === state.currentProjectId);
@@ -1511,7 +2021,7 @@
                 version: '1.0',
                 name: projectName,
                 data: project?.data || JSON.stringify({
-                    frames: state.frames.map(frame => frame.canvas.toDataURL('image/png')),
+                    frames: state.frames.map(frame => flattenFrame(frame).toDataURL('image/png')),
                     currentFrameIndex: state.currentFrameIndex,
                     fps: state.fps,
                     onionSkinEnabled: state.onionSkinEnabled,
@@ -1573,22 +2083,42 @@
         }
 
         // Frame Management
-        function addFrame(duplicateCurrent = false) {
-            const frameCanvas = document.createElement('canvas');
-            frameCanvas.width = mainCanvas.width;
-            frameCanvas.height = mainCanvas.height;
-            const frameCtx = frameCanvas.getContext('2d');
-            
-            if (duplicateCurrent && state.frames.length > 0) {
-                frameCtx.drawImage(state.frames[state.currentFrameIndex].canvas, 0, 0);
+        function addFrame(duplicate = false) {
+            if (duplicate) {
+                const sourceFrame = state.frames[state.currentFrameIndex];
+                
+                // Create new frame with copied layers
+                const newFrame = {
+                    layers: sourceFrame.layers.map(sourceLayer => {
+                        const newCanvas = document.createElement('canvas');
+                        newCanvas.width = state.canvasWidth;
+                        newCanvas.height = state.canvasHeight;
+                        const newCtx = newCanvas.getContext('2d', { willReadFrequently: true });
+                        newCtx.drawImage(sourceLayer.canvas, 0, 0);
+                        
+                        return {
+                            id: state.layerIdCounter++,
+                            name: sourceLayer.name,
+                            canvas: newCanvas,
+                            ctx: newCtx,
+                            visible: sourceLayer.visible,
+                            opacity: sourceLayer.opacity
+                        };
+                    }),
+                    currentLayerIndex: sourceFrame.currentLayerIndex || 0
+                };
+                
+                state.frames.splice(state.currentFrameIndex + 1, 0, newFrame);
+            } else {
+                const newFrame = createFrame();
+                state.frames.splice(state.currentFrameIndex + 1, 0, newFrame);
             }
             
-            state.frames.push({ canvas: frameCanvas, ctx: frameCtx });
-            state.currentFrameIndex = state.frames.length - 1;
-            
-            updateTimeline();
+            state.currentFrameIndex++;
             loadFrame(state.currentFrameIndex);
+            thumbnailCache.clear();
             saveHistory();
+            updateTimeline();
         }
 
         function deleteFrame(index) {
@@ -1610,16 +2140,18 @@
         }
 
         function loadFrame(index) {
-            if (index < 0 || index >= state.frames.length) return;
+            if (!state.frames || index < 0 || index >= state.frames.length) return;
+            if (!state.frames[index] || !state.frames[index].layers) return;
             
             state.currentFrameIndex = index;
             const frame = state.frames[index];
             
             mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-            mainCtx.drawImage(frame.canvas, 0, 0);
+            // Removed - renderCanvas() is called instead
             
             updateOnionSkin();
             updateTimeline();
+            updateLayersPanel();
         }
 
         function updateOnionSkin() {
@@ -1668,13 +2200,17 @@
             thumbCanvas.width = 100;
             thumbCanvas.height = 75;
             const thumbCtx = thumbCanvas.getContext('2d');
-            thumbCtx.drawImage(frame.canvas, 0, 0, 100, 75);
+            thumbCtx.drawImage(flattenFrame(frame), 0, 0, 100, 75);
             
             thumbnailCache.set(index, thumbCanvas);
             return thumbCanvas;
         }
 
         function updateTimeline() {
+            if (!state.frames || state.frames.length === 0) {
+                return;
+            }
+            
             const container = document.getElementById('framesContainer');
             container.innerHTML = '';
             
@@ -1781,12 +2317,29 @@
                     
                     if (action === 'duplicate') {
                         const originalFrame = state.frames[frameIndex];
-                        const newCanvas = document.createElement('canvas');
-                        newCanvas.width = mainCanvas.width;
-                        newCanvas.height = mainCanvas.height;
-                        const newCtx = newCanvas.getContext('2d');
-                        newCtx.drawImage(originalFrame.canvas, 0, 0);
-                        state.frames.splice(frameIndex + 1, 0, { canvas: newCanvas, ctx: newCtx });
+                        
+                        // Duplicate with layers
+                        const newFrame = {
+                            layers: originalFrame.layers.map(sourceLayer => {
+                                const newCanvas = document.createElement('canvas');
+                                newCanvas.width = state.canvasWidth;
+                                newCanvas.height = state.canvasHeight;
+                                const newCtx = newCanvas.getContext('2d', { willReadFrequently: true });
+                                newCtx.drawImage(sourceLayer.canvas, 0, 0);
+                                
+                                return {
+                                    id: state.layerIdCounter++,
+                                    name: sourceLayer.name,
+                                    canvas: newCanvas,
+                                    ctx: newCtx,
+                                    visible: sourceLayer.visible,
+                                    opacity: sourceLayer.opacity
+                                };
+                            }),
+                            currentLayerIndex: originalFrame.currentLayerIndex || 0
+                        };
+                        
+                        state.frames.splice(frameIndex + 1, 0, newFrame);
                         state.currentFrameIndex = frameIndex + 1;
                         thumbnailCache.clear();
                         updateTimeline();
@@ -1794,9 +2347,13 @@
                         saveHistory();
                         showActionIndicator('Frame duplicated! 📋');
                     } else if (action === 'clear') {
-                        state.frames[frameIndex].ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+                        // Clear all layers in the frame
+                        const frame = state.frames[frameIndex];
+                        frame.layers.forEach(layer => {
+                            layer.ctx.clearRect(0, 0, state.canvasWidth, state.canvasHeight);
+                        });
                         if (frameIndex === state.currentFrameIndex) {
-                            mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+                            renderCanvas();
                         }
                         thumbnailCache.delete(frameIndex);
                         updateTimeline();
@@ -1812,6 +2369,8 @@
         // Drawing Functions
         function startDrawing(e) {
             state.isDrawing = true;
+            const currentFrame = state.frames[state.currentFrameIndex];
+            const ctx = currentFrame.layers[state.currentLayerIndex].ctx;
             const rect = mainCanvas.getBoundingClientRect();
             const x = (e.clientX || e.touches[0].clientX) - rect.left;
             const y = (e.clientY || e.touches[0].clientY) - rect.top;
@@ -1828,6 +2387,7 @@
 
         function draw(e) {
             if (!state.isDrawing) return;
+            if (!state.frames || !state.frames[state.currentFrameIndex]) return;
             
             e.preventDefault();
             const rect = mainCanvas.getBoundingClientRect();
@@ -1835,7 +2395,8 @@
             const y = (e.clientY || e.touches[0].clientY) - rect.top;
             
             const currentFrame = state.frames[state.currentFrameIndex];
-            const ctx = currentFrame.ctx;
+            if (!currentFrame.layers || !currentFrame.layers[state.currentLayerIndex]) return;
+            const ctx = currentFrame.layers[state.currentLayerIndex].ctx;
             
             if (state.currentTool === 'pen') {
                 ctx.strokeStyle = state.currentColor;
@@ -1855,7 +2416,7 @@
             state.lastY = y;
             
             mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-            mainCtx.drawImage(currentFrame.canvas, 0, 0);
+            renderCanvas();
         }
 
         function stopDrawing(e) {
@@ -1866,7 +2427,11 @@
             const y = (e.clientY || e.changedTouches?.[0].clientY) - rect.top;
             
             const currentFrame = state.frames[state.currentFrameIndex];
-            const ctx = currentFrame.ctx;
+            if (!currentFrame || !currentFrame.layers || !currentFrame.layers[state.currentLayerIndex]) {
+                state.isDrawing = false;
+                return;
+            }
+            const ctx = currentFrame.layers[state.currentLayerIndex].ctx;
             
             if (state.currentTool === 'line') {
                 ctx.strokeStyle = state.currentColor;
@@ -1897,7 +2462,7 @@
             state.isDrawing = false;
             
             mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-            mainCtx.drawImage(currentFrame.canvas, 0, 0);
+            renderCanvas();
             
             thumbnailCache.delete(state.currentFrameIndex);
             saveHistory();
@@ -1963,27 +2528,38 @@
 
         // History Management
         function saveHistory() {
-            state.history = state.history.slice(0, state.historyIndex + 1);
-            
-            const historyState = {
-                frames: state.frames.map(frame => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = frame.canvas.width;
-                    canvas.height = frame.canvas.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(frame.canvas, 0, 0);
-                    return canvas;
-                }),
-                currentFrameIndex: state.currentFrameIndex
-            };
-            
-            state.history.push(historyState);
-            state.historyIndex++;
-            
             if (state.history.length > 50) {
                 state.history.shift();
-                state.historyIndex--;
+            } else {
+                state.historyIndex++;
             }
+            
+            state.history = state.history.slice(0, state.historyIndex + 1);
+            
+            // Deep copy frames with all layer data
+            state.history.push({
+                frames: state.frames.map(frame => ({
+                    layers: frame.layers.map(layer => {
+                        const c = document.createElement('canvas');
+                        c.width = state.canvasWidth;
+                        c.height = state.canvasHeight;
+                        const ctx = c.getContext('2d', { willReadFrequently: true });
+                        ctx.drawImage(layer.canvas, 0, 0);
+
+                        return {
+                            id: layer.id,
+                            name: layer.name,
+                            visible: layer.visible,
+                            opacity: layer.opacity,
+                            canvas: c,
+                            ctx
+                        };
+                    }),
+                    currentLayerIndex: frame.currentLayerIndex || 0
+                })),
+                currentFrameIndex: state.currentFrameIndex,
+                currentLayerIndex: state.currentLayerIndex
+            });
         }
 
         function undo() {
@@ -1995,19 +2571,33 @@
             state.historyIndex--;
             const historyState = state.history[state.historyIndex];
             
-            state.frames = historyState.frames.map(canvas => {
-                const newCanvas = document.createElement('canvas');
-                newCanvas.width = canvas.width;
-                newCanvas.height = canvas.height;
-                const ctx = newCanvas.getContext('2d');
-                ctx.drawImage(canvas, 0, 0);
-                return { canvas: newCanvas, ctx };
-            });
+            // Restore frames with full layer structure
+            state.frames = historyState.frames.map(frameData => ({
+                layers: frameData.layers.map(layerData => {
+                    const c = document.createElement('canvas');
+                    c.width = state.canvasWidth;
+                    c.height = state.canvasHeight;
+                    const ctx = c.getContext('2d', { willReadFrequently: true });
+                    ctx.drawImage(layerData.canvas, 0, 0);
+
+                    return {
+                        id: layerData.id,
+                        name: layerData.name,
+                        visible: layerData.visible,
+                        opacity: layerData.opacity,
+                        canvas: c,
+                        ctx
+                    };
+                }),
+                currentLayerIndex: frameData.currentLayerIndex || 0
+            }));
             
             state.currentFrameIndex = historyState.currentFrameIndex;
+            state.currentLayerIndex = historyState.currentLayerIndex || 0;
             thumbnailCache.clear();
             loadFrame(state.currentFrameIndex);
             updateTimeline();
+            updateLayersPanel();
             showActionIndicator('Undo ↶');
         }
 
@@ -2020,19 +2610,33 @@
             state.historyIndex++;
             const historyState = state.history[state.historyIndex];
             
-            state.frames = historyState.frames.map(canvas => {
-                const newCanvas = document.createElement('canvas');
-                newCanvas.width = canvas.width;
-                newCanvas.height = canvas.height;
-                const ctx = newCanvas.getContext('2d');
-                ctx.drawImage(canvas, 0, 0);
-                return { canvas: newCanvas, ctx };
-            });
+            // Restore frames with full layer structure
+            state.frames = historyState.frames.map(frameData => ({
+                layers: frameData.layers.map(layerData => {
+                    const c = document.createElement('canvas');
+                    c.width = state.canvasWidth;
+                    c.height = state.canvasHeight;
+                    const ctx = c.getContext('2d', { willReadFrequently: true });
+                    ctx.drawImage(layerData.canvas, 0, 0);
+
+                    return {
+                        id: layerData.id,
+                        name: layerData.name,
+                        visible: layerData.visible,
+                        opacity: layerData.opacity,
+                        canvas: c,
+                        ctx
+                    };
+                }),
+                currentLayerIndex: frameData.currentLayerIndex || 0
+            }));
             
             state.currentFrameIndex = historyState.currentFrameIndex;
+            state.currentLayerIndex = historyState.currentLayerIndex || 0;
             thumbnailCache.clear();
             loadFrame(state.currentFrameIndex);
             updateTimeline();
+            updateLayersPanel();
             showActionIndicator('Redo ↷');
         }
 
@@ -2074,7 +2678,7 @@
         function exportAsGIF() {
             showActionIndicator('Creating animation file... 🎞️');
             
-            const frames = state.frames.map(frame => frame.canvas.toDataURL('image/png', 0.8));
+            const frames = state.frames.map(frame => flattenFrame(frame).toDataURL('image/png', 0.8));
             const frameDuration = 1000 / state.fps;
             
             const htmlContent = '<!DOCTYPE html><html><head><title>Animation Playback</title><style>body{margin:0;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#1a1625;font-family:Arial,sans-serif}canvas{border:2px solid #9b51e0;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.5)}.controls{margin-top:20px;display:flex;gap:10px}button{padding:10px 20px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff6b9d,#9b51e0);color:white;font-weight:bold;cursor:pointer}button:hover{opacity:0.9}.info{color:#b8a8d4;margin-top:10px}</style></head><body><canvas id="canvas" width="' + mainCanvas.width + '" height="' + mainCanvas.height + '"></canvas><div class="controls"><button id="playBtn">Play</button><button id="downloadBtn">Download All Frames</button></div><div class="info">FPS: ' + state.fps + ' | Frames: ' + frames.length + '</div><script>const frames=' + JSON.stringify(frames) + ';const canvas=document.getElementById("canvas");const ctx=canvas.getContext("2d");let currentFrame=0;let isPlaying=false;let animationInterval;function drawFrame(index){const img=new Image();img.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0)};img.src=frames[index]}function play(){if(isPlaying){clearInterval(animationInterval);isPlaying=false;document.getElementById("playBtn").textContent="Play"}else{isPlaying=true;document.getElementById("playBtn").textContent="Pause";animationInterval=setInterval(()=>{drawFrame(currentFrame);currentFrame=(currentFrame+1)%frames.length},' + frameDuration + ')}}document.getElementById("playBtn").addEventListener("click",play);document.getElementById("downloadBtn").addEventListener("click",()=>{frames.forEach((dataUrl,i)=>{const link=document.createElement("a");link.download="frame-"+(i+1)+".png";link.href=dataUrl;link.click()})});drawFrame(0);setTimeout(play,500);<\/script></body></html>';
@@ -2101,7 +2705,7 @@
                     const link = document.createElement('a');
                     const paddedIndex = String(index + 1).padStart(3, '0');
                     link.download = 'frame-' + paddedIndex + '.png';
-                    link.href = frame.canvas.toDataURL('image/png');
+                    link.href = flattenFrame(frame).toDataURL('image/png');
                     link.click();
                 }, index * 100);
             });
@@ -2276,7 +2880,7 @@
             document.getElementById('clearBtn').addEventListener('click', () => {
                 if (confirm('Clear this frame?')) {
                     const currentFrame = state.frames[state.currentFrameIndex];
-                    currentFrame.ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+                    ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
                     mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
                     thumbnailCache.delete(state.currentFrameIndex);
                     saveHistory();
@@ -2290,6 +2894,11 @@
             document.getElementById('duplicateBtn').addEventListener('click', () => {
                 addFrame(true);
                 showActionIndicator('Frame duplicated! 📋');
+            });
+            
+            // Layers
+            document.getElementById('addLayerBtn').addEventListener('click', () => {
+                addLayer();
             });
             
             // Timeline
